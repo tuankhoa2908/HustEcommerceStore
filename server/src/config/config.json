@@ -1,0 +1,23 @@
+{
+    "development": {
+        "username": "root",
+        "password": "tuankhoa2908",
+        "database": "sellcar",
+        "host": "localhost",
+        "dialect": "mysql"
+    },
+    "test": {
+        "username": "root",
+        "password": "tuankhoa2908",
+        "database": "sellcar",
+        "host": "localhost",
+        "dialect": "mysql"
+    },
+    "production": {
+        "username": "root",
+        "password": "tuankhoa2908",
+        "database": "sellcar",
+        "host": "localhost",
+        "dialect": "mysql"
+    }
+}
