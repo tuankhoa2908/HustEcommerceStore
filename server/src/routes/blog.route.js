@@ -10,5 +10,7 @@ router.put("/update/:id", middleware.verifyToken, middleware.isAdmin, blog.updat
 router.get("/:id", blog.getBlog);
 router.get("/", blog.getAllBlog);
 router.delete("/:id", middleware.verifyToken, middleware.isAdmin, blog.deleteBlog);
+router.put('/likes', middleware.verifyToken, blog.likeBlog);
+router.put('/dislikes', middleware.verifyToken, blog.dislikeBlog);
 
 module.exports = router;

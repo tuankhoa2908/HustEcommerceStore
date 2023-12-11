@@ -71,7 +71,6 @@ module.exports = {
 
     // dang xuat tai khoan nguoi dung
     logoutUser: asyncHandler(async (req, res) => {
-        console.log(1);
         const cookie = req.cookies;
         if (!cookie?.refreshToken) throw new Error("No Refresh Token in cookies");
         const refreshToken = cookie.refreshToken;
