@@ -6,6 +6,9 @@ const middleware = require("../middlewares/authMiddleware");
 
 router.post("/register", user.createUser);
 router.post("/login", user.loginUser);
+router.post("/update_password", middleware.verifyToken, user.changePassword);
+router.put("/reset-password/:token", user.resetPassword);
+router.post("/forgot-password-token", user.forgotPasswordToken);
 router.get("/logout", user.logoutUser);
 router.get("/alluser", user.getAllUser);
 router.get("/refresh", user.handleRefreshToken);

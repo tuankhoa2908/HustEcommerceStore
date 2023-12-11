@@ -1,9 +1,12 @@
 const User = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { generateToken } = require("../config/jwtToken");
 const { generateRefreshToken } = require("../config/refreshToken")
 const { validateMongoDbId } = require("../utils/validateMongodbId");
+const { sendEmail } = require("./email.controller");
+
 
 module.exports = {
     // Create New Accout User
@@ -88,6 +91,59 @@ module.exports = {
             secure: true,
         });
         return res.sendStatus(204);
+    }),
+
+    forgotPasswordToken: asyncHandler(async (req, res) => {
+        const { email } = req.body;
+        console.log(email);
+        const user = await User.findOne({ email });
+        if (!user) throw new Error("User not found with this email");
+        try {
+            const token = await user.createPasswordResetToken();
+            await user.save();
+            const resetURL = `Hi, please follow the link to reset your Password. This link is valid till 10 minutes from now. <a href='http://localhost:8080/api/user/reset-password/${token}'>Click Here</a>`
+            const data = {
+                to: email,
+                subject: "Forgot Password Link",
+                html: resetURL,
+                text: "Hey User",
+            };
+            sendEmail(data);
+            res.json({ token })
+        } catch (error) {
+            throw new Error(error);
+        }
+    }),
+
+    resetPassword: asyncHandler(async (req, res) => {
+        const { password } = req.body;
+        const { token } = req.params;
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+        const user = await User.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: Date.now() },
+        })
+        if (!user) throw new Error("Token Expired, Please try again later");
+        user.password = password;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+        res.json({ user });
+    }),
+
+    changePassword: asyncHandler(async (req, res) => {
+        const { _id } = req.user;
+        const { password } = req.body;
+        validateMongoDbId(_id);
+        const user = await User.findById(_id);
+        if (password) {
+            user.password = password;
+            const updatePassword = await user.save();
+            res.json(updatePassword);
+        }
+        else {
+            res.json(user);
+        }
     }),
 
     // lay thong tin ve tat ca tai khoan
