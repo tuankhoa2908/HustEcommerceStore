@@ -42,10 +42,7 @@ var blogSchema = new mongoose.Schema({
             ref: "User",
         },
     ],
-    image: {
-        type: String,
-        default: "https://wiki.matbao.net/wp-content/uploads/2019/09/blog-la-gi.jpg"
-    },
+    image: [],
 }, {
     toJSON: {
         virtuals: true,

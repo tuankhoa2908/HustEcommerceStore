@@ -38,7 +38,9 @@ var userSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
+  address: {
+    type: String
+  },
   wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   refreshToken: {
     type: String,
@@ -46,6 +48,12 @@ var userSchema = new mongoose.Schema({
   passwordChangeAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  // shippingAddress: {
+  //   type: String,
+  // },
+  // billingAddress: {
+  //   type: String,
+  // },
 }, {
   timestamps: true,
 });
@@ -54,7 +62,7 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified('password')) {
     next();
   }
-  const salt = await bcrypt.genSaltSync(10);
+  const salt = bcrypt.genSaltSync(10);
   this.password = await bcrypt.hash(this.password, salt);
 })
 
